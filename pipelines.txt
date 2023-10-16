@@ -1,0 +1,8 @@
+prepare
+
+dvc stage add -n prepare \
+-p prepare.total_train_images,prepare.total_valid_images,prepare.total_test_images,prepare.random_state \
+-d src/data.py -d data/raw/Testing -d data/raw/Training \
+-o data/processed/Testing -o data/processed/Training -o data/processed/Validation \
+python src/data.py --total_train_images '${prepare.total_train_images}' --total_valid_images '${prepare.total_valid_images}' \
+--total_test_images '${prepare.total_test_images}' --random_state '${prepare.random_state}'

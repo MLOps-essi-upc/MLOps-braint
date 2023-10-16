@@ -40,3 +40,29 @@ stages:
       md5: 8c52afebb235d0ffec35c46b8627870a.dir
       size: 10732006
       nfiles: 600
+  train:
+    cmd: python src/train.py --random_state 42 --epochs 20
+    deps:
+    - path: data/processed/Testing
+      hash: md5
+      md5: 9b5f9d65d4a3feeeda40f33436de31ca.dir
+      size: 7854577
+      nfiles: 400
+    - path: data/processed/Training
+      hash: md5
+      md5: 22353d3be3ab9a572e061a6647b3bdc6.dir
+      size: 44643874
+      nfiles: 2500
+    - path: data/processed/Validation
+      hash: md5
+      md5: 8c52afebb235d0ffec35c46b8627870a.dir
+      size: 10732006
+      nfiles: 600
+    - path: src/train.py
+      hash: md5
+      md5: ae736e50ca49e00edc50fd0c15976b26
+      size: 886
+    params:
+      params.yaml:
+        train.epochs: 20
+        train.random_state: 42

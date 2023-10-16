@@ -15,8 +15,8 @@ from dotenv import load_dotenv, find_dotenv
 class BrainTumorClassifier:
     def __init__(self, base_filepath, seed = 42):
         self.FILEPATH = base_filepath
-        self.TRAINING_FOLDER = os.path.join(base_filepath, "data/processed/Training/")
-        self.TESTING_FOLDER = os.path.join(base_filepath, "data/processed/Testing/")
+        self.TRAINING_FOLDER = os.path.join(base_filepath, "processed/Training/")
+        self.TESTING_FOLDER = os.path.join(base_filepath, "processed/Testing/")
         self.CLASSES = ["glioma_tumor", "menigioma_tumor", "no_tumor", "pituitary_tumor"]
 
         # Set seed for reproducibility

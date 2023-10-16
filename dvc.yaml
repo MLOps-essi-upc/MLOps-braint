@@ -17,7 +17,12 @@ stages:
     - data/processed/training
     - data/processed/validation
   train:
-    cmd: src/train.py -d data/processed/Testing -d data/processed/Training -d d data/processed/Validation
-      python -m src/train.py --random_state ${train.random_state}
+    deps: 
+    - src/train.py
+    - data/processed/Testing
+    - data/processed/Training
+    - data/processed/Validation
+    cmd: python src/train.py --random_state ${train.random_state} --epochs ${train.epochs}
     params:
-    - train.random_state-d
+    - train.random_state
+    - train.epochs

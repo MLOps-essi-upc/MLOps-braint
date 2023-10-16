@@ -6,7 +6,8 @@ import argparse
 def main():
     load_dotenv(find_dotenv())
     parser = argparse.ArgumentParser(description="Train the model")
-    parser.add_argument('--random_state', type=int)
+    parser.add_argument('--random_state', type=int, required=True)
+    parser.add_argument('--epochs', type=int, required=True)
     
     args = parser.parse_args()
     # Initialize the classifier
@@ -17,7 +18,7 @@ def main():
     model = classifier.create_model()
 
     # Train the model
-    classifier.train_and_evaluate(model, train_gen, valid_gen, epochs=50)
+    classifier.train_and_evaluate(model, train_gen, valid_gen, epochs=args.epochs)
 
 if __name__ == "__main__":
     main()

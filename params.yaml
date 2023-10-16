@@ -1,8 +1,9 @@
 prepare:
-    total_train_images: 2500
-    total_valid_images: 600
-    total_test_images: 400
-    random_state: 42
+  total_train_images: 2500
+  total_valid_images: 600
+  total_test_images: 400
+  random_state: 42
 
 train:
   random_state: 42
+  epochs: 20

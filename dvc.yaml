@@ -7,6 +7,7 @@ stages:
     - data/raw/Testing
     - data/raw/Training
     - src/data.py
+    - params.yaml
     params:
     - prepare.random_state
     - prepare.total_test_images
@@ -17,12 +18,20 @@ stages:
     - data/processed/training
     - data/processed/validation
   train:
-    deps: 
+    deps:
     - src/train.py
     - data/processed/Testing
     - data/processed/Training
-    - data/processed/Validation
+    - params.yaml
     cmd: python src/train.py --random_state ${train.random_state} --epochs ${train.epochs}
     params:
     - train.random_state
     - train.epochs
+    outs:
+    - models/model
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - data/processed/Validation
+    - src/evaluate.py
+    - models/model

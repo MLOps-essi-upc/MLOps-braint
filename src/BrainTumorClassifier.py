@@ -15,8 +15,9 @@ from dotenv import load_dotenv, find_dotenv
 class BrainTumorClassifier:
     def __init__(self, base_filepath, seed = 42):
         self.FILEPATH = base_filepath
-        self.TRAINING_FOLDER = os.path.join(base_filepath, "processed/Training/")
-        self.TESTING_FOLDER = os.path.join(base_filepath, "processed/Testing/")
+        self.TRAINING_FOLDER = os.path.join(base_filepath, "data/processed/Training/")
+        self.TESTING_FOLDER = os.path.join(base_filepath, "data/processed/Testing/")
+        self.MODEL_FILEPATH = os.path.join(base_filepath, "models/")
         self.CLASSES = ["glioma_tumor", "menigioma_tumor", "no_tumor", "pituitary_tumor"]
 
         # Set seed for reproducibility
@@ -135,6 +136,9 @@ class BrainTumorClassifier:
 
         mlflow.log_artifact(artifact_path)
 
+        # delete the file after logging it
+        os.remove(artifact_path)
+
     def train_and_evaluate(self, model, train_generator, valid_generator, epochs=10, experiment_name="braint"):
         """
         Trains the provided model and evaluates its performance. Metrics and artifacts are logged with MLflow.
@@ -180,15 +184,55 @@ class BrainTumorClassifier:
             # Save the model as an artifact
             mlflow.tensorflow.log_model(model, "models")
 
-            model_save_path = os.path.join(self.FILEPATH, "model")  # specify your desired save path here
+            model_save_path = os.path.join(self.MODEL_FILEPATH, "model")  # specify your desired save path here
             model.save(model_save_path)
 
             # Ensure the MLflow run is ended
             mlflow.end_run()
 
         return history, report
+    
 
-    def plot_and_log_roc_curve(self, y_true, y_pred_prob):
+    def evaluate_on_test(self, model, test_generator, experiment_name="braint"):
+        """
+        Evaluate the model on test data and log metrics to MLflow.
+
+        Args:
+            model (tf.keras.Model): The TensorFlow model to evaluate.
+            test_generator (DirectoryIterator): Generator for the test data.
+            experiment_name (str): The name of the MLflow experiment. Default is "braint".
+        """
+        # Ensure MLflow is set up
+        self.setup_mlflow(experiment_name)
+
+        with mlflow.start_run(experiment_id=mlflow.get_experiment_by_name(experiment_name).experiment_id):
+            # Log the files used for testing
+            self.log_used_files("testing", test_generator)
+
+            # Evaluate the model on the test set
+            scores = model.evaluate(test_generator)
+            metrics = {'test_' + metric: value for metric, value in zip(model.metrics_names, scores)}
+
+            # Log metrics
+            mlflow.log_metrics(metrics)
+
+            # Predict and generate classification report and confusion matrix, if needed
+            y_pred_prob = model.predict(test_generator)
+            y_pred = y_pred_prob.argmax(axis=1)
+            y_true = test_generator.classes
+
+            report = classification_report(y_true, y_pred, target_names=self.CLASSES, output_dict=True)
+            report_str = '\n'.join([f'{key}: {item}' for key, item in report.items()])
+            mlflow.log_text(report_str, "classification_report_test.txt")
+
+            # Optionally, log ROC curve for test data as well, similar to training
+            binarized_y_true = label_binarize(y_true, classes=[0, 1, 2, 3])  # Considering 4 classes as per `self.CLASSES`
+            self.plot_and_log_roc_curve(binarized_y_true, y_pred_prob)
+
+            # Ensure the MLflow run is ended
+            mlflow.end_run()
+
+    def plot_and_log_roc_curve(self, y_true, y_pred_prob, save = False):
         """
         Plots the ROC curve for the multi-class scenario and logs the image as an MLflow artifact.
 
@@ -219,6 +263,8 @@ class BrainTumorClassifier:
         plt.title('Some extension of Receiver operating characteristic to multi-class')
         plt.legend(loc="lower right")
         plt.savefig("roc_curves.png")
-        plt.close()
 
         mlflow.log_artifact("roc_curves.png")
+        if not save:
+            os.remove("roc_curves.png")
+

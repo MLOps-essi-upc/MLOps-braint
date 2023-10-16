@@ -16,8 +16,8 @@ stages:
       nfiles: 2870
     - path: src/data.py
       hash: md5
-      md5: 1c1f818e034367b8db5bedf951d03be1
-      size: 9370
+      md5: aa4383525598d6f40cca2021d46e9f49
+      size: 9385
     params:
       params.yaml:
         prepare.random_state: 42
@@ -41,7 +41,7 @@ stages:
       size: 10732006
       nfiles: 600
   train:
-    cmd: python src/train.py --random_state 42 --epochs 20
+    cmd: python src/train.py --random_state 42 --epochs 5
     deps:
     - path: data/processed/Testing
       hash: md5
@@ -53,16 +53,34 @@ stages:
       md5: 22353d3be3ab9a572e061a6647b3bdc6.dir
       size: 44643874
       nfiles: 2500
-    - path: data/processed/Validation
-      hash: md5
-      md5: 8c52afebb235d0ffec35c46b8627870a.dir
-      size: 10732006
-      nfiles: 600
     - path: src/train.py
       hash: md5
       md5: ae736e50ca49e00edc50fd0c15976b26
       size: 886
     params:
       params.yaml:
-        train.epochs: 20
+        train.epochs: 5
         train.random_state: 42
+    outs:
+    - path: models/model
+      hash: md5
+      md5: 5094edf5ee70f81683ae5258766d3620.dir
+      size: 228620749
+      nfiles: 5
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - path: data/processed/Validation
+      hash: md5
+      md5: 8c52afebb235d0ffec35c46b8627870a.dir
+      size: 10732006
+      nfiles: 600
+    - path: models/model
+      hash: md5
+      md5: 5094edf5ee70f81683ae5258766d3620.dir
+      size: 228620749
+      nfiles: 5
+    - path: src/evaluate.py
+      hash: md5
+      md5: 4cbb93efff26a74da6b4fb042fe07f05
+      size: 763

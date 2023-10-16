@@ -23,15 +23,15 @@ class DataHandler:
         :param seed: int, seed for random number generation.
         """
         self.base_filepath = base_filepath
-        self.raw_training_folder = os.path.join(base_filepath, "raw/Training/")
-        self.raw_testing_folder = os.path.join(base_filepath, "raw/Testing/")
+        self.raw_training_folder = os.path.join(base_filepath, "data/raw/Training/")
+        self.raw_testing_folder = os.path.join(base_filepath, "data/raw/Testing/")
 
         # Set seed for reproducibility
         np.random.seed(seed)
         tf.random.set_seed(seed)
 
         # Define the path for the processed data
-        self.processed_data_path = os.path.join(base_filepath, "processed/")
+        self.processed_data_path = os.path.join(base_filepath, "data/processed/")
         self.processed_training_folder = os.path.join(self.processed_data_path, "Training/")
         self.processed_testing_folder = os.path.join(self.processed_data_path, "Testing/")
         self.processed_validation_folder = os.path.join(self.processed_data_path, "Validation/")

@@ -6,4 +6,4 @@ prepare:
 
 train:
   random_state: 42
-  epochs: 20
+  epochs: 5

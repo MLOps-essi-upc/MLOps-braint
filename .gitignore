@@ -89,3 +89,7 @@ target/
 .mypy_cache/
 
 .env
+
+pipelines.txt
+
+/models/*

@@ -6,3 +6,14 @@ dvc stage add -n prepare \
 -o data/processed/Testing -o data/processed/Training -o data/processed/Validation \
 python src/data.py --total_train_images '${prepare.total_train_images}' --total_valid_images '${prepare.total_valid_images}' \
 --total_test_images '${prepare.total_test_images}' --random_state '${prepare.random_state}'
+
+
+dvc stage add -n train \
+-p train.random_state\
+-d src/train.py -d data/processed/Testing -d data/processed/Training -d d data/processed/Validation \
+python -m src/train.py --random_state '${train.random_state}'
+
+
+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
+
+2f43725b77475441a870f6cc9733720fdeeb5f40

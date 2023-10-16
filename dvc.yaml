@@ -16,3 +16,8 @@ stages:
     - data/processed/testing
     - data/processed/training
     - data/processed/validation
+  train:
+    cmd: src/train.py -d data/processed/Testing -d data/processed/Training -d d data/processed/Validation
+      python -m src/train.py --random_state ${train.random_state}
+    params:
+    - train.random_state-d

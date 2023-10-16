@@ -6,6 +6,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from dotenv import load_dotenv, find_dotenv
 from tensorflow.keras.preprocessing.image import save_img
 import json
+import cv2
 
 class DataHandler:
     """
@@ -148,6 +149,9 @@ def save_generator_output_with_structure(generator, base_output_dir, total_image
             if images_saved >= total_images_desired:
                 return  # Stop saving once we have enough images
 
+            # Process the image (e.g., for noise reduction)
+            processed_image = process_image(image)  # Adjust according to your method's input requirements
+
             class_index = np.argmax(label_encoded)  # Get the class index of the current image
             class_name = reverse_class_indices[class_index]  # Get the class name corresponding to the index
 
@@ -158,9 +162,43 @@ def save_generator_output_with_structure(generator, base_output_dir, total_image
             # Construct a unique filename for the image and save it
             filename = f"img_{images_saved}_{class_name}.png"  # Unique filename using the saved image count
             image_path = os.path.join(output_dir, filename)
-            save_img(image_path, image)  # Save the image
+            save_img(image_path, processed_image)  # Save the processed image
 
             images_saved += 1  # Update the count of images saved
+
+def process_image(image):
+    """
+    Process the image through noise detection and possible removal.
+    
+    :param image: Image data to be processed.
+    :return: Processed image data.
+    """
+    if is_noisy(image):
+        image = cv2.medianBlur(image, 3)
+    return image
+
+def is_noisy(image):
+    """
+    Determine whether an image is noisy using saturation analysis.
+
+    :param image: Image data to be analyzed.
+    :return: Boolean, whether the image is considered noisy.
+    """
+    # Convert image to HSV color space
+    image_hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)  # Ensure correct color conversion
+
+    # Calculate histogram of saturation channel
+    s = cv2.calcHist([image_hsv], [1], None, [256], [0, 256])
+
+    # Calculate percentage of pixels with saturation >= p
+    p = 0.05
+    s_perc = np.sum(s[int(p * 255):-1]) / np.prod(image_hsv.shape[0:2])
+
+    # Percentage threshold; above: valid image, below: noise
+    s_thr = 0.01
+    return s_perc < s_thr  # Note: the condition here was corrected
+
+
 
 if __name__ == "__main__":
     # Load the environment variables

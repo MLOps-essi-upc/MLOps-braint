@@ -1,0 +1,42 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/data.py --total_train_images 2500 --total_valid_images 600 --total_test_images
+      400 --random_state 42
+    deps:
+    - path: data/raw/Testing
+      hash: md5
+      md5: 8b17d7ee8019891d6d308f570a6c2b2b.dir
+      size: 13375930
+      nfiles: 394
+    - path: data/raw/Training
+      hash: md5
+      md5: 115ba59527aaaa7bb4d5009e3ef34067.dir
+      size: 79703413
+      nfiles: 2870
+    - path: src/data.py
+      hash: md5
+      md5: 1c1f818e034367b8db5bedf951d03be1
+      size: 9370
+    params:
+      params.yaml:
+        prepare.random_state: 42
+        prepare.total_test_images: 400
+        prepare.total_train_images: 2500
+        prepare.total_valid_images: 600
+    outs:
+    - path: data/processed/testing
+      hash: md5
+      md5: 9b5f9d65d4a3feeeda40f33436de31ca.dir
+      size: 7854577
+      nfiles: 400
+    - path: data/processed/training
+      hash: md5
+      md5: 22353d3be3ab9a572e061a6647b3bdc6.dir
+      size: 44643874
+      nfiles: 2500
+    - path: data/processed/validation
+      hash: md5
+      md5: 8c52afebb235d0ffec35c46b8627870a.dir
+      size: 10732006
+      nfiles: 600

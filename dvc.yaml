@@ -1,0 +1,18 @@
+stages:
+  prepare:
+    cmd: python src/data.py --total_train_images ${prepare.total_train_images} --total_valid_images
+      ${prepare.total_valid_images} --total_test_images ${prepare.total_test_images}
+      --random_state ${prepare.random_state}
+    deps:
+    - data/raw/Testing
+    - data/raw/Training
+    - src/data.py
+    params:
+    - prepare.random_state
+    - prepare.total_test_images
+    - prepare.total_train_images
+    - prepare.total_valid_images
+    outs:
+    - data/processed/testing
+    - data/processed/training
+    - data/processed/validation

@@ -7,6 +7,8 @@ from dotenv import load_dotenv, find_dotenv
 from tensorflow.keras.preprocessing.image import save_img
 import json
 import cv2
+import sys
+import argparse
 
 class DataHandler:
     """
@@ -204,19 +206,28 @@ if __name__ == "__main__":
     # Load the environment variables
     load_dotenv(find_dotenv())
 
+    # Parsing command-line arguments
+    parser = argparse.ArgumentParser(description="Prepare data for training")
+    parser.add_argument('--total_train_images', type=int, required=True)
+    parser.add_argument('--total_valid_images', type=int, required=True)
+    parser.add_argument('--total_test_images', type=int, required=True)
+    parser.add_argument('--random_state', type=int)
+    
+    args = parser.parse_args()
+
+    total_train_images = args.total_train_images
+    total_valid_images = args.total_valid_images
+    total_test_images = args.total_test_images
+    seed = args.random_state
+
     # Initialize the data handler
-    handler = DataHandler(base_filepath=os.getenv("BASE_FILEPATH"))
+    handler = DataHandler(base_filepath=os.getenv("BASE_FILEPATH"), seed=seed)
 
     # Clear any previously processed data
     handler.clear_previous_data()
 
     # Set up the data generators
-    train_gen, valid_gen, test_gen = handler.setup_data_generators()
-
-    # Decide on the exact number of images you want to save for each set
-    total_train_images = 2500
-    total_valid_images = 600
-    total_test_images = 400
+    train_gen, valid_gen, test_gen = handler.setup_data_generators()    
 
     # Save the images, respecting the original data structure
     save_generator_output_with_structure(train_gen, handler.processed_training_folder, total_images_desired=total_train_images)

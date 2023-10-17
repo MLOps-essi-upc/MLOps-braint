@@ -11,6 +11,7 @@ from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
 from dotenv import load_dotenv, find_dotenv
 
+from codecarbon import EmissionsTracker
 
 class BrainTumorClassifier:
     def __init__(self, base_filepath, seed = 42):
@@ -151,23 +152,29 @@ class BrainTumorClassifier:
             experiment_name (str): The name of the MLflow experiment. Default is "braint".
         """
         self.setup_mlflow(experiment_name)
-
+        tracker = EmissionsTracker()
+        tracker.start()
         with mlflow.start_run(experiment_id=mlflow.get_experiment_by_name(experiment_name).experiment_id):
             # Log the files used for training, validation, and testing
             self.log_used_files("training", train_generator)
             self.log_used_files("validation", valid_generator)
-
+            
+            tracker.start_task("Train the model")
             history = model.fit(train_generator, epochs=epochs, validation_data=valid_generator)
-
+            tracker.stop_task()
+            
             # Setup for test data evaluation
             _, _, test_generator = self.setup_data_generators()  # Get the test generator
             self.log_used_files("testing", test_generator)
-
+            
             # After training finishes, evaluate on the test set
+            tracker.start_task("Evaluate the model")
             y_pred_prob = model.predict(test_generator)
             y_pred = y_pred_prob.argmax(axis=1)
+            tracker.stop_task()
             y_true = test_generator.classes
-
+           
+            
             report = classification_report(y_true, y_pred, target_names=self.CLASSES, output_dict=True)
             accuracy = accuracy_score(y_true, y_pred)
 
@@ -189,7 +196,7 @@ class BrainTumorClassifier:
 
             # Ensure the MLflow run is ended
             mlflow.end_run()
-
+            tracker.stop()
         return history, report
     
 

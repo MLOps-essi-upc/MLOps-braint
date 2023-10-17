@@ -39,6 +39,7 @@ class DataHandler:
         # Create directories if they don't exist
         for folder in [self.processed_data_path, self.processed_training_folder, self.processed_testing_folder, self.processed_validation_folder]:
             os.makedirs(folder, exist_ok=True)
+            print(f"Created directory: {folder}")
 
     def setup_data_generators(self):
         """

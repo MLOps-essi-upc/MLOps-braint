@@ -1,3 +1,9 @@
+"""
+BrainTumorClassifier module
+
+This module contains the implementation of the BrainTumorClassifier class for
+detecting brain tumors in medical images.
+"""
 import os
 import numpy as np
 import tensorflow as tf
@@ -9,12 +15,18 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 from sklearn.metrics import classification_report, accuracy_score, roc_curve, auc
 from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
-from dotenv import load_dotenv, find_dotenv
-
 from codecarbon import EmissionsTracker
 
+
 class BrainTumorClassifier:
-    def __init__(self, base_filepath, seed = 42):
+    """
+        BrainTumorClassifier class
+
+        This class provides methods and attributes for detecting brain tumors in
+        medical images.
+        """
+
+    def __init__(self, base_filepath, seed=42):
         self.FILEPATH = base_filepath
         self.TRAINING_FOLDER = os.path.join(base_filepath, "data/processed/Training/")
         self.TESTING_FOLDER = os.path.join(base_filepath, "data/processed/Testing/")
@@ -25,12 +37,12 @@ class BrainTumorClassifier:
         np.random.seed(seed)
         tf.random.set_seed(seed)
 
-    def mount_drive(self):
-        """
-        Mounts the Google Drive.
-        """
-        from google.colab import drive
-        drive.mount('/content/drive', force_remount=True)
+    # def mount_drive(self):
+    #     """
+    #     Mounts the Google Drive.
+    #     """
+    #     from google.colab import drive
+    #     drive.mount('/content/drive', force_remount=True)
 
     def setup_data_generators(self):
         """
@@ -39,11 +51,11 @@ class BrainTumorClassifier:
         Returns:
             tuple: train_generator, valid_generator, test_generator
         """
-        valid_datagen = ImageDataGenerator(rescale=1./255)
-        test_datagen = ImageDataGenerator(rescale=1./255)
+        # valid_datagen = ImageDataGenerator(rescale=1. / 255)
+        test_datagen = ImageDataGenerator(rescale=1. / 255)
 
         train_datagen = ImageDataGenerator(
-            rescale=1./255,
+            rescale=1. / 255,
             validation_split=0.2,
             rotation_range=15,
             width_shift_range=0.1,
@@ -104,11 +116,10 @@ class BrainTumorClassifier:
                       metrics=['accuracy'])
         return model
 
-    def setup_mlflow(self, experiment_name="braint", 
-                     repository = "dagshub.com/norhther/MLOps-braint.mlflow"):
+    def setup_mlflow(self, experiment_name="braint",
+                     repository="dagshub.com/norhther/MLOps-braint.mlflow"):
         """
         Sets up MLflow for experiment tracking.
-
         Args:
             experiment_name: Name of the MLflow experiment
         """
@@ -126,12 +137,13 @@ class BrainTumorClassifier:
         Logs the files used during different phases (training, validation, testing) in MLflow.
 
         Args:
-            phase (str): The phase during which the files were used ('training', 'validation', or 'testing').
+            phase (str): The phase during which the files were used ('training',
+            'validation', or 'testing').
             generator (DirectoryIterator): Generator containing the filenames.
         """
         filenames = generator.filenames
         artifact_path = f"{phase}_files.txt"
-        with open(artifact_path, 'w') as f:
+        with open(artifact_path, 'w', encoding='utf-8') as f:
             for item in filenames:
                 f.write(f"{item}\n")
 
@@ -140,9 +152,11 @@ class BrainTumorClassifier:
         # delete the file after logging it
         os.remove(artifact_path)
 
-    def train_and_evaluate(self, model, train_generator, valid_generator, epochs=10, experiment_name="braint"):
+    def train_and_evaluate(self, model, train_generator, valid_generator, epochs=10,
+                           experiment_name="braint"):
         """
-        Trains the provided model and evaluates its performance. Metrics and artifacts are logged with MLflow.
+        Trains the provided model and evaluates its performance. Metrics
+         and artifacts are logged with MLflow.
 
         Args:
             model (Sequential): The TensorFlow model to train.
@@ -154,28 +168,30 @@ class BrainTumorClassifier:
         self.setup_mlflow(experiment_name)
         tracker = EmissionsTracker()
         tracker.start()
-        with mlflow.start_run(experiment_id=mlflow.get_experiment_by_name(experiment_name).experiment_id):
+        with mlflow.start_run(
+                experiment_id=mlflow.get_experiment_by_name(experiment_name).experiment_id):
             # Log the files used for training, validation, and testing
             self.log_used_files("training", train_generator)
             self.log_used_files("validation", valid_generator)
-            
+
             tracker.start_task("Train the model")
             history = model.fit(train_generator, epochs=epochs, validation_data=valid_generator)
             tracker.stop_task()
-            
+
             # Setup for test data evaluation
-            _, _, test_generator = self.setup_data_generators()  # Get the test generator
+            # Get the test generator
+            _, _, test_generator = self.setup_data_generators()
             self.log_used_files("testing", test_generator)
-            
+
             # After training finishes, evaluate on the test set
             tracker.start_task("Evaluate the model")
             y_pred_prob = model.predict(test_generator)
             y_pred = y_pred_prob.argmax(axis=1)
             tracker.stop_task()
             y_true = test_generator.classes
-           
-            
-            report = classification_report(y_true, y_pred, target_names=self.CLASSES, output_dict=True)
+
+            report = classification_report(y_true, y_pred, target_names=self.CLASSES,
+                                           output_dict=True)
             accuracy = accuracy_score(y_true, y_pred)
 
             # Log metrics and artifacts
@@ -185,20 +201,22 @@ class BrainTumorClassifier:
             mlflow.log_text(report_str, "classification_report.txt")
 
             # Plot ROC Curve and log as an artifact
-            binarized_y_true = label_binarize(y_true, classes=[0, 1, 2, 3])  # Considering 4 classes as per `self.CLASSES`
+            # Considering 4 classes as per `self.CLASSES`
+            binarized_y_true = label_binarize(y_true,
+                                              classes=[0, 1, 2, 3])
             self.plot_and_log_roc_curve(binarized_y_true, y_pred_prob)
 
             # Save the model as an artifact
             mlflow.tensorflow.log_model(model, "models")
 
-            model_save_path = os.path.join(self.MODEL_FILEPATH, "model")  # specify your desired save path here
+            # specify your desired save path here
+            model_save_path = os.path.join(self.MODEL_FILEPATH, "model")
             model.save(model_save_path)
 
             # Ensure the MLflow run is ended
             mlflow.end_run()
             tracker.stop()
         return history, report
-    
 
     def evaluate_on_test(self, model, test_generator, experiment_name="braint"):
         """
@@ -212,13 +230,15 @@ class BrainTumorClassifier:
         # Ensure MLflow is set up
         self.setup_mlflow(experiment_name)
 
-        with mlflow.start_run(experiment_id=mlflow.get_experiment_by_name(experiment_name).experiment_id):
+        with mlflow.start_run(
+                experiment_id=mlflow.get_experiment_by_name(experiment_name).experiment_id):
             # Log the files used for testing
             self.log_used_files("testing", test_generator)
 
             # Evaluate the model on the test set
             scores = model.evaluate(test_generator)
-            metrics = {'test_' + metric: value for metric, value in zip(model.metrics_names, scores)}
+            metrics = {'test_' + metric: value for metric, value \
+                       in zip(model.metrics_names, scores)}
 
             # Log metrics
             mlflow.log_metrics(metrics)
@@ -228,18 +248,21 @@ class BrainTumorClassifier:
             y_pred = y_pred_prob.argmax(axis=1)
             y_true = test_generator.classes
 
-            report = classification_report(y_true, y_pred, target_names=self.CLASSES, output_dict=True)
+            report = classification_report(y_true, y_pred,
+                                           target_names=self.CLASSES, output_dict=True)
             report_str = '\n'.join([f'{key}: {item}' for key, item in report.items()])
             mlflow.log_text(report_str, "classification_report_test.txt")
 
             # Optionally, log ROC curve for test data as well, similar to training
-            binarized_y_true = label_binarize(y_true, classes=[0, 1, 2, 3])  # Considering 4 classes as per `self.CLASSES`
+            # Considering 4 classes as per `self.CLASSES`
+            binarized_y_true = label_binarize(y_true,
+                                              classes=[0, 1, 2, 3])
             self.plot_and_log_roc_curve(binarized_y_true, y_pred_prob)
 
             # Ensure the MLflow run is ended
             mlflow.end_run()
 
-    def plot_and_log_roc_curve(self, y_true, y_pred_prob, save = False):
+    def plot_and_log_roc_curve(self, y_true, y_pred_prob, save=False):
         """
         Plots the ROC curve for the multi-class scenario and logs the image as an MLflow artifact.
 
@@ -248,9 +271,9 @@ class BrainTumorClassifier:
             y_pred_prob (np.array): Predicted probabilities for each class.
         """
         # Compute ROC curve and ROC area for each class
-        fpr = dict()
-        tpr = dict()
-        roc_auc = dict()
+        fpr = {}
+        tpr = {}
+        roc_auc = {}
         for i in range(len(self.CLASSES)):
             fpr[i], tpr[i], _ = roc_curve(y_true[:, i], y_pred_prob[:, i])
             roc_auc[i] = auc(fpr[i], tpr[i])
@@ -259,8 +282,7 @@ class BrainTumorClassifier:
         plt.figure()
         for i, color in zip(range(len(self.CLASSES)), ['blue', 'red', 'green', 'black']):
             plt.plot(fpr[i], tpr[i], color=color, lw=2,
-                     label='ROC curve of class {0} (area = {1:0.2f})'
-                     ''.format(self.CLASSES[i], roc_auc[i]))
+                     label=f'ROC curve of class {self.CLASSES[i]} (area = {roc_auc[i]:0.2f})')
 
         plt.plot([0, 1], [0, 1], 'k--', lw=2)
         plt.xlim([0.0, 1.0])
@@ -274,4 +296,3 @@ class BrainTumorClassifier:
         mlflow.log_artifact("roc_curves.png")
         if not save:
             os.remove("roc_curves.png")
-

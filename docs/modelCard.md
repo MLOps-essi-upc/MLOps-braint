@@ -1,4 +1,4 @@
-            # Model Card
+                        # Model Card
 ## Model Information
 - Model Name: adorable-ant-91
 - Model Card Created: 17-10-2023
@@ -74,7 +74,19 @@ This model's objective is to perform image classification on brain MRI scans. Ot
 - Privacy and Data Handling: All images seem to have been anonymised and metadata removed.
 ## Intended Use
 - Primary Use Case: Brain tumour classification
-- Users: This machine learning model is aimed to aid doctors or trained specialists in identifying brain tumours in MRI scans. This model is not intended to be used instead of a qualified practitioner.  
+- Users: This machine learning model is aimed to aid doctors or trained specialists in identifying brain tumours in MRI scans. This model is not intended to be used instead of a qualified practitioner.
+
+## Emission Information
+- CO2 Emissions:
+    - Emissions: 21701 g
+    - Power Consumption: 21 kWh
+    - Emission Source: Code Carbon
+    - Training Type: Pre-training
+    - Geographic Location: Catalunya, Spain
+      Hardware Used: Intel(R) Core(TM) i5-9600K CPU @ 3.70GHz, 1 x NVIDIA GeForce RTX 2080
+    - Cloud Service: None
+    - Training Time: 258 s
+    - Optimization Techniques: None
 
 ## Model Performance
 ### Evaluation Metrics:

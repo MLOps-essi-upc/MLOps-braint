@@ -1,7 +1,20 @@
             Braint
 ==============================
 
-This repository contains the ML pipeline for a Brain Tumor Classifier
+# Braint: Brain Tumor Classification
+
+## Overview
+
+"Braint" is an MLOps-driven project developed during our advanced MLOps course. This project adheres to the principles of good practices in machine learning operations. It's designed to classify brain tumors with the following categories: Glioma, Meningioma, No Tumor, and Pituitary.
+
+Our model aims to assist medical professionals by providing a second opinion in identifying and differentiating tumor types, potentially leading to quicker, data-driven decisions in a clinical environment.
+
+### Classes
+
+- **Glioma**
+- **Meningioma**
+- **No Tumor**
+- **Pituitary**
 
 Project Organization
 ------------

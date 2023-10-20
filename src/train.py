@@ -1,37 +1,40 @@
 """
-train module
+evaluation module
 
 This module contains the implementation of the function
-that trains the model.
+that evaluates the model.
 """
 import os
-import argparse
+import tensorflow as tf
 from dotenv import load_dotenv, find_dotenv
 from BrainTumorClassifier import BrainTumorClassifier
 
 
 def main():
     """
-        main function
+    main function
 
-        This function contains the implementation of the training
-         of the model
-        """
+    This function contains the implementation of the evaluation
+     of the model
+    """
     load_dotenv(find_dotenv())
-    parser = argparse.ArgumentParser(description="Train the model")
-    parser.add_argument('--random_state', type=int, required=True)
-    parser.add_argument('--epochs', type=int, required=True)
-    args = parser.parse_args()
+
+    print(os.getenv("BASE_FILEPATH"))
+
     # Initialize the classifier
-    classifier = BrainTumorClassifier(base_filepath=os.getenv("BASE_FILEPATH"),
-                                      seed=args.random_state)
+    classifier = BrainTumorClassifier(base_filepath=os.getenv("BASE_FILEPATH"))
 
-    # Setup data generators and model
-    train_gen, valid_gen, _ = classifier.setup_data_generators()
-    model = classifier.create_model()
+    # Load the trained model
+    model = tf.keras.models.load_model(os.path.join(os.getenv("MODEL_FILEPATH"),
+                                                    'model'))
 
-    # Train the model
-    classifier.train_and_evaluate(model, train_gen, valid_gen, epochs=args.epochs)
+    # Setup for test data evaluation
+    _, _, test_generator = classifier.setup_data_generators()  # Get the test generator
+
+    # Evaluate the model on test data
+    # The evaluate_on_test function should handle evaluation and logging metrics to MLflow
+    classifier.evaluate_on_test(model, test_generator)
+
 
 if __name__ == "__main__":
     main()

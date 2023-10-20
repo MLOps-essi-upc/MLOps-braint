@@ -15,6 +15,7 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator, save_img
 from dotenv import load_dotenv, find_dotenv
 
+
 class DataHandler:
     """
     Handles the data loading, augmentation, and saving of the processed data for the
@@ -56,7 +57,7 @@ class DataHandler:
         """
         # Define your data augmentation parameters
         train_datagen = ImageDataGenerator(
-            rescale=1./255,
+            rescale=1. / 255,
             validation_split=0.2,  # assuming 20% validation split
             rotation_range=15,
             width_shift_range=0.1,
@@ -66,7 +67,7 @@ class DataHandler:
             horizontal_flip=True
         )
 
-        valid_test_datagen = ImageDataGenerator(rescale=1./255)
+        valid_test_datagen = ImageDataGenerator(rescale=1. / 255)
 
         # Set up generators
         train_generator = train_datagen.flow_from_directory(
@@ -142,6 +143,7 @@ def save_class_indices(class_indices, directory):
     with open(json_path, 'w', encoding='utf-8') as outfile:
         json.dump(class_indices, outfile)
 
+
 def save_generator_output_with_structure(generator, base_output_dir, total_images_desired):
     """
     Saves the output of a data generator to a directory, preserving the data structure.
@@ -187,16 +189,18 @@ def save_generator_output_with_structure(generator, base_output_dir, total_image
             # Update the count of images saved
             images_saved += 1
 
+
 def process_image(image):
     """
     Process the image through noise detection and possible removal.
-    
+
     :param image: Image data to be processed.
     :return: Processed image data.
     """
     if is_noisy(image):
         image = cv2.medianBlur(image, 3)
     return image
+
 
 def is_noisy(image):
     """
@@ -221,7 +225,6 @@ def is_noisy(image):
     return s_perc < s_thr  # Note: the condition here was corrected
 
 
-
 if __name__ == "__main__":
     # Load the environment variables
     load_dotenv(find_dotenv())
@@ -232,18 +235,23 @@ if __name__ == "__main__":
     parser.add_argument('--total_valid_images', type=int, required=True)
     parser.add_argument('--total_test_images', type=int, required=True)
     parser.add_argument('--random_state', type=int)
+
     args = parser.parse_args()
 
     total_train_images = args.total_train_images
     total_valid_images = args.total_valid_images
     total_test_images = args.total_test_images
-    seed = args.random_state
+    seed_r = args.random_state
+
     # Initialize the data handler
-    handler = DataHandler(base_filepath=os.getenv("BASE_FILEPATH"), seed=seed)
+    handler = DataHandler(base_filepath=os.getenv("BASE_FILEPATH"), seed=seed_r)
+
     # Clear any previously processed data
     handler.clear_previous_data()
+
     # Set up the data generators
     train_gen, valid_gen, test_gen = handler.setup_data_generators()
+
     # Save the images, respecting the original data structure
     save_generator_output_with_structure(train_gen, handler.processed_training_folder,
                                          total_images_desired=total_train_images)

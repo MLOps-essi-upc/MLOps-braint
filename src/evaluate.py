@@ -18,6 +18,7 @@ def main():
     """
     load_dotenv(find_dotenv())
 
+    print(os.getenv("BASE_FILEPATH"))
     # Initialize the classifier
     classifier = BrainTumorClassifier(base_filepath=os.getenv("BASE_FILEPATH"))
 

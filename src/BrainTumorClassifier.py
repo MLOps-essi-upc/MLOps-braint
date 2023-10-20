@@ -15,6 +15,7 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 from sklearn.metrics import classification_report, accuracy_score, roc_curve, auc
 from sklearn.preprocessing import label_binarize
 import matplotlib.pyplot as plt
+
 from codecarbon import EmissionsTracker
 
 
@@ -120,6 +121,7 @@ class BrainTumorClassifier:
                      repository="dagshub.com/norhther/MLOps-braint.mlflow"):
         """
         Sets up MLflow for experiment tracking.
+
         Args:
             experiment_name: Name of the MLflow experiment
         """

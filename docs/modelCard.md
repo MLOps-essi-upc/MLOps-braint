@@ -1,8 +1,7 @@
-# Model Card
+                        # Model Card
 ## Model Information
-- Model Name: [Insert Model Name]
-- Model Version: [Insert Version Number]
-- Model Card Created: [Insert Date]
+- Model Name: adorable-ant-91
+- Model Card Created: 17-10-2023
 
 ## Model Architecture:
 
@@ -73,35 +72,35 @@ This model's objective is to perform image classification on brain MRI scans. Ot
 - Data Collection and Bias: There are fewer cases of the no tumour class, no characteristic of the real-world proportions.  
 - Fairness and Equity: We do not have knowledge of age, gender, or demographic variety within our data. Therefore, we cannot guarantee fairness and equity of the model. 
 - Privacy and Data Handling: All images seem to have been anonymised and metadata removed.
-- Transparency and Accountability: [Describe the model's transparency initiatives, including documentation, model interpretation, and accountability practices.]
 ## Intended Use
 - Primary Use Case: Brain tumour classification
-- Users: This machine learning model is aimed to aid doctors or trained specialists in identifying brain tumours in MRI scans. This model is not intended to be used instead of a qualified practitioner.  
+- Users: This machine learning model is aimed to aid doctors or trained specialists in identifying brain tumours in MRI scans. This model is not intended to be used instead of a qualified practitioner.
+
+## Emission Information
+- CO2 Emissions:
+    - Emissions: 21701 g
+    - Power Consumption: 21 kWh
+    - Emission Source: Code Carbon
+    - Training Type: Pre-training
+    - Geographic Location: Catalunya, Spain
+      Hardware Used: Intel(R) Core(TM) i5-9600K CPU @ 3.70GHz, 1 x NVIDIA GeForce RTX 2080
+    - Cloud Service: None
+    - Training Time: 258 s
+    - Optimization Techniques: None
 
 ## Model Performance
 ### Evaluation Metrics:
-- Micro-average F1-score: [Insert Metric 1 value]
-- Sensitivity: [Insert Metric 2 value]
-- Specificity: [Insert Metric 3 value]
-- Performance on Test Data: [Provide test data performance results, if available.]
+- Average Micro F1-score: 0.56
+- Average Precision: 0.8
+- Recall: 0.61
 
 ## Limitations
-- Known Limitations: [List any known limitations or weaknesses of the model.]
+- Known Limitations: The model struggles with distinguishing between tumour classes.
 - Out-of-Scope Tasks:
   - Image Segmentation
   - Different types of medical images such as X-rays or CT-scans, or normal pictures of human heads. 
   - MRI scans of different parts of the body  
   
-## Ethical Considerations
-- Bias and Fairness: [Discuss how bias was addressed during model development and any remaining challenges.]
-  
 ## Responsible AI Practices
-- Data Governance: [Describe data governance practices, including data acquisition, labeling, and data usage policies.]
-- Model Governance: [Explain how model updates, versioning, and deployment are managed.]
-- User Education: [Outline efforts to educate users about the model's capabilities and limitations.]
-## References
-- [List relevant papers, articles, or documentation related to the model and its development.]
-
-## Contact Information
-- Model Developers: [Provide contact information for the team or individuals responsible for the model.]
-- Support Email: [Insert an email address for inquiries or support related to the model.]
+- Data Governance: The data was retrieved from Kaggle repositories. The previous team cleaned and verified all the labels.
+- Model Governance: [TBC]

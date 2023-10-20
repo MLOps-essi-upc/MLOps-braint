@@ -14,9 +14,9 @@ stages:
     - prepare.total_train_images
     - prepare.total_valid_images
     outs:
-    - data/processed/testing
-    - data/processed/training
-    - data/processed/validation
+    - data/processed/Testing
+    - data/processed/Training
+    - data/processed/Validation
   train:
     deps:
     - src/train.py

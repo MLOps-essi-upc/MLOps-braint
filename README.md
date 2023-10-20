@@ -1,6 +1,3 @@
-            Braint
-==============================
-
 # Braint: Brain Tumor Classification
 
 ## Overview

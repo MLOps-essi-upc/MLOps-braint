@@ -93,4 +93,5 @@ target/
 pipelines.txt
 
 /models/*
-/data
+/data/raw
+/data/processed

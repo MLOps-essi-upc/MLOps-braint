@@ -3,7 +3,7 @@ import pytest
 import mlflow.tensorflow
 from sklearn.metrics import f1_score
 from dotenv import load_dotenv, find_dotenv
-from BrainTumorClassifier import BrainTumorClassifier
+from src.models.BrainTumorClassifier import BrainTumorClassifier
 
 @pytest.fixture
 def bt_model():

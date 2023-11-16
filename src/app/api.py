@@ -9,6 +9,7 @@ from tensorflow.keras.preprocessing import image
 import numpy as np
 from src import MODEL_RUN_ID
 from src.app.schemas import BrainTumorType
+from PIL import Image
 
 
 model = mlflow.tensorflow.load_model(f"runs:/{MODEL_RUN_ID}/model")
@@ -78,7 +79,7 @@ async def predict(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="File must be an image")
 
     content = await file.read()
-    img = image.img_to_array(image.load_img(io.BytesIO(content), target_size=(150, 150)))
+    img = image.img_to_array(Image.open(io.BytesIO(content)).resize((150, 150)))
     img_array = image.img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
     img_array /= 255.0

@@ -95,3 +95,10 @@ pipelines.txt
 /models/*
 /data/raw
 /data/processed
+<<<<<<< HEAD
+=======
+
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
+>>>>>>> 700cb50586d25fa02de4900b5b0385ef9a670be2

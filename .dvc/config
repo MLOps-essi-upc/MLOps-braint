@@ -1,5 +1,4 @@
 [core]
     remote = origin
-    autostage = true
 ['remote "origin"']
     url = https://dagshub.com/norhther/MLOps-braint.dvc

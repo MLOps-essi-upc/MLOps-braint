@@ -1,0 +1,18 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "8501:8501" # Map TCP port 8501 in the container to port 8501 on the Docker host for Streamlit
+    depends_on:
+      - model
+    environment:
+      MODEL_URL: http://model:8000  # URL of the model API
+    env_file:
+      - .env
+
+  model:
+    build: .
+    ports:
+      - "8000:8000" # Map TCP port 8000 in the container to port 8000 on the Docker host for FastAPI
+    command: uvicorn src.app.api:app --host 0.0.0.0 --reload 

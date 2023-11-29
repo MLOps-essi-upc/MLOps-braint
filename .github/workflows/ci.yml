@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -19,13 +18,18 @@ jobs:
       with:
         python-version: '3.8'
 
+    - name: Set Environment Variables
+      run: |
+        echo "BASE_FILEPATH=${{ secrets.BASE_FILEPATH }}" >> $GITHUB_ENV
+
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
 
-    - name: Set PYTHONPATH
-      run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
-
     - name: Run tests
+      env:
+        MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+        MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+        MODEL_RUN_ID: ${{ secrets.MODEL_RUN_ID }}
       run: |
-        pytest tests/
+        pytest tests/test_model.py

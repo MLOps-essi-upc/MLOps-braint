@@ -20,7 +20,7 @@ MODEL_URL = os.environ.get("MODEL_URL", "http://localhost:8000")
 # Download the fixed image
 def convert_image(img):
     buf = BytesIO()
-    img.save(buf, format="PNG")
+    img.save(buf, format="JPEG")
     byte_im = buf.getvalue()
     return byte_im
 
@@ -33,12 +33,12 @@ def fix_image(upload):
     # Send the image in a POST request to the local server
     # Save the image to a BytesIO buffer
     image_bytes = BytesIO()
-    image.save(image_bytes, format='png')
+    image.save(image_bytes, format='jpeg')
 
     # Reset the buffer's position to the beginning
     image_bytes.seek(0)
 
-    files = {'file': ('image.png', image_bytes, 'image/png')}
+    files = {'file': ('image.jpeg', image_bytes, 'image/jpeg')}
     print(f"{MODEL_URL}/predict")
     response = requests.post(f"{MODEL_URL}/predict", files=files)
 

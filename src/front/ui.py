@@ -15,7 +15,7 @@ st.sidebar.write("## Upload")
 
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 PORT = 8000
-MODEL_URL = os.environ.get("MODEL_URL", "http://localhost:8000")
+MODEL_URL = os.environ.get("MODEL_URL")
 
 # Download the fixed image
 def convert_image(img):

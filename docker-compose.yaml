@@ -7,12 +7,12 @@ services:
     depends_on:
       - model
     environment:
-      MODEL_URL: http://model:8888  # URL of the model API
+      MODEL_URL: http://model:8000  # URL of the model API
     env_file:
       - .env
 
   model:
     build: .
     ports:
-      - "8888:8888" # Map TCP port 8000 in the container to port 8000 on the Docker host for FastAPI
-    command: uvicorn src.app.api:app --host 0.0.0.0 --port 8888 --reload
+      - "8000:8000" # Map TCP port 8000 in the container to port 8000 on the Docker host for FastAPI
+    command: uvicorn src.app.api:app --host 0.0.0.0 --port 8000 --reload

@@ -3,7 +3,7 @@ import pytest
 import mlflow.tensorflow
 from sklearn.metrics import f1_score
 from dotenv import load_dotenv, find_dotenv
-from src.models.BrainTumorClassifier import BrainTumorClassifier
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 @pytest.fixture
 def bt_model():
@@ -16,11 +16,22 @@ def bt_model():
     run_id = "a550a3b1cb024e42b3c7087e24632362"
     return mlflow.tensorflow.load_model(f"runs:/{run_id}/model")
 
+@pytest.fixture
+def test_generator():
+    project_dir = os.path.abspath('.')
+    testing_folder = os.path.join(project_dir, "tests/Testing/")
+    test_datagen = ImageDataGenerator(rescale=1. / 255)
+    return test_datagen.flow_from_directory(
+        testing_folder,
+        target_size=(150, 150),
+        batch_size=64,
+        class_mode='categorical',
+        shuffle=False
+    )
 
-def test_model_accuracy(bt_model):
+
+def test_model_accuracy(bt_model, test_generator):
     load_dotenv(find_dotenv())
-    classifier = BrainTumorClassifier(base_filepath=os.getenv("BASE_FILEPATH"))
-    _, _, test_generator = classifier.setup_data_generators()
     y_pred_prob = bt_model.predict(test_generator)
     y_pred = y_pred_prob.argmax(axis=1)
     y_true = test_generator.classes

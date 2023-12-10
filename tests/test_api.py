@@ -24,8 +24,8 @@ def test_list_experiments(client):
 
 def test_predict_with_valid_image(client):
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    image_path = os.path.join(script_dir, "test_img_1.png")
-    files = {"file": (image_path, open(image_path, "rb"), "image/png")}
+    image_path = os.path.join(script_dir, "test_img_1.jpeg")
+    files = {"file": (image_path, open(image_path, "rb"), "image/jpeg")}
     response = client.post("/predict", files=files)
     assert response.status_code == 200
     data = response.json()

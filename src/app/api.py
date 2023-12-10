@@ -79,7 +79,7 @@ async def predict(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="File must be an image")
 
     content = await file.read()
-    img = image.img_to_array(Image.open(io.BytesIO(content)).resize((150, 150)))
+    img = image.img_to_array(Image.open(io.BytesIO(content)).convert("RGB").resize((150, 150)))
     img_array = image.img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
     img_array /= 255.0

@@ -27,6 +27,10 @@ def convert_image(img):
 
 def fix_image(upload):
     image = Image.open(upload)
+
+    if image.mode not in ["RGB", "L"]:
+        image = image.convert("RGB")
+
     col1.write("Original Image :camera:")
     col1.image(image)
 
